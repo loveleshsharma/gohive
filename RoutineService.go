@@ -2,7 +2,7 @@ package GoHive
 
 import "fmt"
 
-const DEFAULT_POOL_CAPACITY = 10
+const DEFAULT_POOL_CAPACITY = 3
 
 type RoutineService struct {
 	routinePool  Pool
@@ -12,30 +12,35 @@ type RoutineService struct {
 
 func NewDefaultRoutinePool() RoutineService {
 	wtQueue := NewWaitingQueue()
-	return RoutineService{waitingQueue: &wtQueue, poolSize: DEFAULT_POOL_CAPACITY, routinePool: NewFixedSizePool(DEFAULT_POOL_CAPACITY)}
+	routineService := RoutineService{waitingQueue: &wtQueue, poolSize: DEFAULT_POOL_CAPACITY}
+	pool := NewFixedSizePool(DEFAULT_POOL_CAPACITY,&routineService)
+	routineService.routinePool = pool
+	return routineService
 }
 
 func NewFixedSizeRoutinePool(numOfRoutines int) RoutineService {
 	wtQueue := NewWaitingQueue()
-	return RoutineService{waitingQueue: &wtQueue, poolSize: numOfRoutines}
+	routineService := RoutineService{waitingQueue: &wtQueue, poolSize: numOfRoutines}
+	pool := NewFixedSizePool(numOfRoutines,&routineService)
+	routineService.routinePool = pool
+	return routineService
 }
 
 func (rs *RoutineService) Submit(fun func()) {
 	newTask := Task{executable: fun}
-	rs.waitingQueue.EnqueueTask(newTask)
 
-	//	checking availability in the pool
+	//	if worker is available, immediately assigning the task
 	if rs.routinePool.isWorkerAvailable() {
-		newTask, err := rs.waitingQueue.DequeueTask()
-		if err != nil {
-			fmt.Println("Cannot Dequeue task:", err.Error())
-		}
+		fmt.Println("Assigning!")
 		rs.routinePool.assignTask(newTask)
+	} else {
+		fmt.Println("Queuing!")
+		rs.waitingQueue.EnqueueTask(newTask)
 	}
 }
 
 func (rs *RoutineService) RunningWorkers() int {
-	return rs.routinePool.running
+	return rs.routinePool.runningWorkers
 }
 
 func (rs *RoutineService) PoolCapacity() int {
@@ -43,5 +48,5 @@ func (rs *RoutineService) PoolCapacity() int {
 }
 
 func (rs *RoutineService) AvailableWorkers() int {
-	return rs.routinePool.capacity - rs.routinePool.running
+	return rs.routinePool.capacity - rs.routinePool.runningWorkers
 }
