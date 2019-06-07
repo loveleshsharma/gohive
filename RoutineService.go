@@ -39,6 +39,21 @@ func (rs *RoutineService) Submit(fun func()) {
 	}
 }
 
+//notifies the routineService that one of the worker from
+//the pool has completed its task and a new task can be
+//assigned to this worker if waiting in the queue.
+func (rs *RoutineService) notify() {
+	if rs.waitingQueue.IsNotEmpty() {
+		task, err := rs.waitingQueue.DequeueTask()
+		if err != nil {
+			fmt.Println("Error Dequeueing Task!")
+			return
+		}
+		fmt.Println("Pulling task from Queue!")
+		rs.routinePool.assignTask(task)
+	}
+}
+
 func (rs *RoutineService) RunningWorkers() int {
 	return rs.routinePool.runningWorkers
 }

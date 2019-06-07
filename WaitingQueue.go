@@ -31,3 +31,7 @@ func (wq *WaitingQueue) DequeueTask() (Task, error) {
 		return Task{}, errors.New("Queue is Empty")
 	}
 }
+
+func (wq *WaitingQueue) IsNotEmpty() bool {
+	return wq.totalTasks > 0
+}
