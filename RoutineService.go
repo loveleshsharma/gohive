@@ -1,8 +1,15 @@
 package GoHive
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/pkg/errors"
+)
 
 const DEFAULT_POOL_CAPACITY = 3
+
+var (
+	ErrInvalidPoolSize = errors.New("Invalid Pool Size: Pool Size must be a positive number!")
+)
 
 type RoutineService struct {
 	routinePool  Pool
@@ -10,33 +17,42 @@ type RoutineService struct {
 	poolSize     int
 }
 
-func NewDefaultRoutinePool() RoutineService {
+func NewDefaultRoutinePool() *RoutineService {
 	wtQueue := NewWaitingQueue()
 	routineService := RoutineService{waitingQueue: &wtQueue, poolSize: DEFAULT_POOL_CAPACITY}
-	pool := NewFixedSizePool(DEFAULT_POOL_CAPACITY,&routineService)
+	pool := NewFixedSizePool(DEFAULT_POOL_CAPACITY, &routineService)
 	routineService.routinePool = pool
-	return routineService
+	return &routineService
 }
 
-func NewFixedSizeRoutinePool(numOfRoutines int) RoutineService {
+func NewFixedSizeRoutinePool(numOfRoutines int) (*RoutineService, error) {
+
+	if numOfRoutines <= 0 {
+		panic(ErrInvalidPoolSize)
+	}
+
 	wtQueue := NewWaitingQueue()
 	routineService := RoutineService{waitingQueue: &wtQueue, poolSize: numOfRoutines}
-	pool := NewFixedSizePool(numOfRoutines,&routineService)
+	pool := NewFixedSizePool(numOfRoutines, &routineService)
 	routineService.routinePool = pool
-	return routineService
+	return &routineService, nil
 }
 
-func (rs *RoutineService) Submit(fun func()) {
+func (rs *RoutineService) Submit(fun func()) error {
 	newTask := Task{executable: fun}
 
 	//	if worker is available, immediately assigning the task
 	if rs.routinePool.isWorkerAvailable() {
 		fmt.Println("Assigning!")
-		rs.routinePool.assignTask(newTask)
+		err := rs.routinePool.assignTask(newTask)
+		if err != nil {
+			panic(err)
+		}
 	} else {
 		fmt.Println("Queuing!")
 		rs.waitingQueue.EnqueueTask(newTask)
 	}
+	return nil
 }
 
 //notifies the routineService that one of the worker from
@@ -46,7 +62,7 @@ func (rs *RoutineService) notify() {
 	if rs.waitingQueue.IsNotEmpty() {
 		task, err := rs.waitingQueue.DequeueTask()
 		if err != nil {
-			fmt.Println("Error Dequeueing Task!")
+			fmt.Errorf("Error Dequeueing Task!")
 			return
 		}
 		fmt.Println("Pulling task from Queue!")
@@ -64,4 +80,8 @@ func (rs *RoutineService) PoolCapacity() int {
 
 func (rs *RoutineService) AvailableWorkers() int {
 	return rs.routinePool.capacity - rs.routinePool.runningWorkers
+}
+
+func (rs *RoutineService) Close() {
+	rs.routinePool.Close()
 }
