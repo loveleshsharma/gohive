@@ -5,24 +5,32 @@ import (
 	"github.com/pkg/errors"
 )
 
-const DEFAULT_POOL_CAPACITY = 3
+const (
+	DefaultPoolCapacity = 10
+)
 
 var (
-	ErrInvalidPoolSize = errors.New("Invalid Pool Size: Pool Size must be a positive number!")
+	ErrInvalidPoolSize = errors.New("Invalid pool Size: pool Size must be a positive number!")
+
+	ErrInvalidPoolState = errors.New("pool is Closed: Cannot Assign task to a closed pool!")
 )
 
 type RoutineService struct {
-	routinePool  Pool
+	routinePool  *pool
 	waitingQueue *WaitingQueue
 	poolSize     int
 }
 
 func NewDefaultRoutinePool() *RoutineService {
-	wtQueue := NewWaitingQueue()
-	routineService := RoutineService{waitingQueue: &wtQueue, poolSize: DEFAULT_POOL_CAPACITY}
-	pool := NewFixedSizePool(DEFAULT_POOL_CAPACITY, &routineService)
+
+	routineService := &RoutineService{
+		waitingQueue: NewWaitingQueue(),
+		poolSize:     DefaultPoolCapacity,
+	}
+	pool := newFixedSizePool(DefaultPoolCapacity, routineService)
 	routineService.routinePool = pool
-	return &routineService
+
+	return routineService
 }
 
 func NewFixedSizeRoutinePool(numOfRoutines int) (*RoutineService, error) {
@@ -30,24 +38,31 @@ func NewFixedSizeRoutinePool(numOfRoutines int) (*RoutineService, error) {
 	if numOfRoutines <= 0 {
 		panic(ErrInvalidPoolSize)
 	}
-
-	wtQueue := NewWaitingQueue()
-	routineService := RoutineService{waitingQueue: &wtQueue, poolSize: numOfRoutines}
-	pool := NewFixedSizePool(numOfRoutines, &routineService)
+	routineService := &RoutineService{
+		waitingQueue: NewWaitingQueue(),
+		poolSize:     numOfRoutines,
+	}
+	pool := newFixedSizePool(numOfRoutines, routineService)
 	routineService.routinePool = pool
-	return &routineService, nil
+
+	return routineService, nil
 }
 
 func (rs *RoutineService) Submit(fun func()) error {
+	if fun == nil {
+		return nil
+	}
+
+	if rs.routinePool.status == CLOSED {
+		panic(ErrInvalidPoolState)
+	}
+
 	newTask := Task{executable: fun}
 
 	//	if worker is available, immediately assigning the task
 	if rs.routinePool.isWorkerAvailable() {
 		fmt.Println("Assigning!")
-		err := rs.routinePool.assignTask(newTask)
-		if err != nil {
-			panic(err)
-		}
+		rs.routinePool.assignTask(newTask)
 	} else {
 		fmt.Println("Queuing!")
 		rs.waitingQueue.EnqueueTask(newTask)
@@ -79,9 +94,9 @@ func (rs *RoutineService) PoolCapacity() int {
 }
 
 func (rs *RoutineService) AvailableWorkers() int {
-	return rs.routinePool.capacity - rs.routinePool.runningWorkers
+	return rs.routinePool.capacity - rs.routinePool.runningWorkers //TODO: check for atomicity
 }
 
 func (rs *RoutineService) Close() {
-	rs.routinePool.Close()
+	rs.routinePool.close()
 }

@@ -1,76 +1,74 @@
 package GoHive
 
 import (
-	"github.com/pkg/errors"
 	"sync"
 )
 
 type state int
 
-const (
+const(
 	OPEN   state = 1
 	CLOSED state = 0
 )
 
-var (
-	ErrInvalidPoolState = errors.New("Pool is Closed: Cannot Assign task to a closed pool!")
-)
-
-//TODO: implement lock mechanishm in Pool for atomic operation at a time
-
-type Pool struct {
+type pool struct {
 	capacity         int
 	runningWorkers   int
 	availableWorkers sync.Pool
+	closePool		 sync.Once
+	locker			 sync.Mutex
 	status           state
 	routineService   *RoutineService //reference back to the routine service who owns this pool
 }
 
-func NewFixedSizePool(newSize int, routineService *RoutineService) Pool {
-	newPool := Pool{capacity: newSize, routineService: routineService, status: OPEN}
-	newPool.availableWorkers = sync.Pool{
-		New: func() interface{} {
-			return new(Worker)
+func newFixedSizePool(newSize int, routineService *RoutineService) *pool {
+	newPool := pool{
+		capacity: newSize,
+		routineService: routineService,
+		status: OPEN,
+		availableWorkers: sync.Pool{
+			New: func() interface{} {
+				return new(worker)
+			},
 		},
 	}
-	return newPool
+	return &newPool
 }
 
-func (p *Pool) assignTask(task Task) error {
-	if p.status == OPEN {
-		worker := p.availableWorkers.Get().(*Worker)
-		worker.taskChan = make(chan func())
-		worker.pool = p
-		go worker.run()
-		worker.taskChan <- task.getTask()
-		p.runningWorkers++
-		return nil
-	}
-	return ErrInvalidPoolState
+func (p *pool) assignTask(task Task) {
+	p.locker.Lock()
+	defer p.locker.Unlock()
+	worker := p.availableWorkers.Get().(*worker)
+	worker.taskChan = make(chan func())
+	worker.pool = p
+	go worker.run()
+	worker.taskChan <- task.getTask()
+	p.runningWorkers++
 }
 
-func (p *Pool) Done(w *Worker) {
-	w = new(Worker)
+func (p *pool) done(w *worker) {
+	w = new(worker)
 	p.availableWorkers.Put(w)
+	p.locker.Lock()
 	p.runningWorkers--
+	p.locker.Unlock()
 	p.routineService.notify() //	notify the RoutineService to pull more tasks from the queue if waiting
 }
 
-func (p *Pool) Close() {
-	if p.status == CLOSED {
-		return
-	}
-	p.status = CLOSED
+func (p *pool) close() {
+	p.closePool.Do(func() {
+		p.status = CLOSED
+	})
 }
 
-func (p *Pool) isWorkerAvailable() bool {
+func (p *pool) isWorkerAvailable() bool {
 	return p.capacity > p.runningWorkers
 }
 
-func (p *Pool) getRunning() int {
+func (p *pool) getRunning() int {
 	return p.runningWorkers
 }
 
-func (p *Pool) getCapacity() int {
+func (p *pool) getCapacity() int {
 	return p.capacity
 }

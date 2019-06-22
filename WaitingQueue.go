@@ -10,9 +10,9 @@ type WaitingQueue struct {
 	totalTasks int
 }
 
-func NewWaitingQueue() WaitingQueue {
+func NewWaitingQueue() *WaitingQueue {
 	wtQue := WaitingQueue{que: make([]Task, 0, 10), totalTasks: 0}
-	return wtQue
+	return &wtQue
 }
 
 func (wq *WaitingQueue) EnqueueTask(task Task) {
