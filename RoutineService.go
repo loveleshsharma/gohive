@@ -3,6 +3,7 @@ package GoHive
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"os"
 )
 
 const (
@@ -54,7 +55,7 @@ func (rs *RoutineService) Submit(fun func()) error {
 	}
 
 	if rs.routinePool.status == CLOSED {
-		panic(ErrInvalidPoolState)
+		return ErrInvalidPoolState
 	}
 
 	newTask := Task{executable: fun}
@@ -77,7 +78,7 @@ func (rs *RoutineService) notify() {
 	if rs.waitingQueue.IsNotEmpty() {
 		task, err := rs.waitingQueue.DequeueTask()
 		if err != nil {
-			fmt.Errorf("Error Dequeueing Task!")
+			fmt.Fprintf(os.Stderr,"Error Dequeueing Task!")
 			return
 		}
 		fmt.Println("Pulling task from Queue!")
@@ -94,7 +95,7 @@ func (rs *RoutineService) PoolCapacity() int {
 }
 
 func (rs *RoutineService) AvailableWorkers() int {
-	return rs.routinePool.capacity - rs.routinePool.runningWorkers //TODO: check for atomicity
+	return rs.routinePool.capacity - rs.routinePool.runningWorkers
 }
 
 func (rs *RoutineService) Close() {
