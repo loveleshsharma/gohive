@@ -1,5 +1,6 @@
 package GoHive
 
+//represents an executable task
 type Task struct {
 	executable func()
 }
@@ -13,5 +14,7 @@ func (t *Task) getTask() (func()) {
 }
 
 func NewTask(fun func()) Task {
-	return Task{executable: fun}
+	return Task{
+		executable: fun,
+	}
 }
