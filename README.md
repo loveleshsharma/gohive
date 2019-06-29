@@ -1,6 +1,6 @@
 # GoHive
+<p align="center"> <img width="120" height="120" src="internal/static/GoHiveIcon.png" alt=""></p> 
 
-<img src="https://github.com/loveleshsharma/GoHive/blob/master/beehive.jpg"/>
 
 Package GoHive implements a simple and easy to use goroutine pool for Go
 
