@@ -1,7 +1,6 @@
 package GoHive
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 )
 
@@ -27,7 +26,6 @@ func NewTaskQueue() *taskQueue {
 
 //puts a new task in the taskQueue
 func (wq *taskQueue) EnqueueTask(task Task) {
-	fmt.Println("Task queued!")
 	wq.que = append(wq.que, task)
 	wq.totalTasks++
 }

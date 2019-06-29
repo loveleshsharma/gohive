@@ -45,7 +45,7 @@ func NewDefaultSizePool() *PoolService {
 }
 
 //returns PoolService object with the specified pool size
-func NewFixedSizePool(nGoRoutines int) (*PoolService, error) {
+func NewFixedSizePool(nGoRoutines int) *PoolService {
 
 	if nGoRoutines <= 0 {
 		panic(ErrInvalidPoolSize)
@@ -57,7 +57,7 @@ func NewFixedSizePool(nGoRoutines int) (*PoolService, error) {
 	pool := newFixedSizePool(nGoRoutines, poolService)
 	poolService.workerPool = pool
 
-	return poolService, nil
+	return poolService
 }
 
 //submits a new task and assigns it to the pool
@@ -74,10 +74,8 @@ func (rs *PoolService) Submit(fun func()) error {
 
 	//	if worker is available, immediately assigning the task
 	if rs.workerPool.isWorkerAvailable() {
-		fmt.Println("Assigning!")
 		rs.workerPool.assignTask(newTask)
 	} else {
-		fmt.Println("Queuing!")
 		rs.taskQueue.EnqueueTask(newTask)
 	}
 	return nil
@@ -93,7 +91,6 @@ func (rs *PoolService) notify() {
 			fmt.Fprintf(os.Stderr,"Error Dequeueing Task!")
 			return
 		}
-		fmt.Println("Pulling task from Queue!")
 		rs.workerPool.assignTask(task)
 	}
 }

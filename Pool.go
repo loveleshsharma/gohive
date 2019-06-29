@@ -36,7 +36,7 @@ type pool struct {
 	poolService *PoolService
 }
 
-//returns an instance of GoHive pool with the size specified
+//returns an instance of pool with the size specified
 func newFixedSizePool(newSize int, poolService *PoolService) *pool {
 	newPool := pool{
 		poolSize:    newSize,
