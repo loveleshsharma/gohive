@@ -1,6 +1,6 @@
 # GoHive
 
-![]("beehive.jpg")
+<img src="https://github.com/loveleshsharma/GoHive/blob/master/beehive.jpg"/>
 
 Package GoHive implements a simple and easy to use goroutine pool for Go
 
@@ -14,7 +14,7 @@ Package GoHive implements a simple and easy to use goroutine pool for Go
 - Provides functions like: AvailableWorkers(), ActiveWorkers() and Close() etc.
 
 ## Installation
-```
+```go
 go get -u github.com/loveleshsharma/GoHive
 ```
 
@@ -22,8 +22,8 @@ go get -u github.com/loveleshsharma/GoHive
 
 - Create an instance of PoolService type first
 
-```
-hive, err := GoHive.NewFixedSizePool(5)
+```go
+hive := GoHive.NewFixedSizePool(5)
 ```
 
 - Invoke the Submit() function and pass the task to execute
@@ -44,7 +44,7 @@ Once the pool is closed, we cannot assign any task to it
 
 Let's get into a full program where we can see how to use the GoHive package in order to execute many goroutines simultaneously
 
-```
+```go
 package main
 
 import (
