@@ -1,6 +1,6 @@
 # GoHive
 
-<div align="center"><img src="./beehive.jpg"/></div>
+![]("beehive.jpg")
 
 Package GoHive implements a simple and easy to use goroutine pool for Go
 
