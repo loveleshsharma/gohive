@@ -15,12 +15,12 @@ const (
 type pool struct {
 
 	//number of workers in the pool
-	poolSize         int
+	poolCapacity int
 
 	//number of currently active workers
 	activeWorkers    int
 
-	//pool of available workers out of total poolSize
+	//pool of available workers out of total poolCapacity
 	availableWorkers sync.Pool
 
 	//object which closes the pool and it can be called only once in the program scope
@@ -37,11 +37,11 @@ type pool struct {
 }
 
 //returns an instance of pool with the size specified
-func newFixedSizePool(newSize int, poolService *PoolService) *pool {
+func newPool(newSize int, poolService *PoolService) *pool {
 	newPool := pool{
-		poolSize:    newSize,
-		poolService: poolService,
-		status:      OPEN,
+		poolCapacity: newSize,
+		poolService:  poolService,
+		status:       OPEN,
 		availableWorkers: sync.Pool{
 			New: func() interface{} {
 				return new(worker)
@@ -84,10 +84,10 @@ func (p *pool) close() {
 }
 
 //returns if any worker is available
-func (p *pool) isWorkerAvailable() bool { return p.poolSize > p.activeWorkers }
+func (p *pool) isWorkerAvailable() bool { return p.poolCapacity > p.activeWorkers }
 
 //returns number of active workers
 func (p *pool) getActiveWorkers() int {	return p.activeWorkers }
 
 //returns the pool size
-func (p *pool) getPoolSize() int { return p.poolSize }
+func (p *pool) getPoolSize() int { return p.poolCapacity }

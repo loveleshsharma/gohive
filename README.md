@@ -1,5 +1,5 @@
 # GoHive
-<p align="center"> <img width="120" height="120" src="internal/static/GoHiveIcon.png" alt=""></p> 
+<p align="center"> <img width="150" height="150" src="internal/static/GoHiveIcon.png" alt=""></p> 
 
 
 Package GoHive implements a simple and easy to use goroutine pool for Go
@@ -14,8 +14,9 @@ Package GoHive implements a simple and easy to use goroutine pool for Go
 - Provides functions like: AvailableWorkers(), ActiveWorkers() and Close() etc.
 
 ## Installation
+Use ```go get``` to install and update:
 ```go
-go get -u github.com/loveleshsharma/GoHive
+$ go get -u github.com/loveleshsharma/GoHive
 ```
 
 ## Usage
@@ -28,14 +29,14 @@ hive := GoHive.NewFixedSizePool(5)
 
 - Invoke the Submit() function and pass the task to execute
 
-```
+```go
 hive.Submit(someTask())
 ```
 Submit function accepts a function as an argument, which it passes to the pool if a worker is available, otherwise enqueues it in a waiting queue
 
 - To close the pool we can invoke the Close() function
 
-```
+```go
 hive.Close()
 ```
 Once the pool is closed, we cannot assign any task to it

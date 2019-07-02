@@ -10,10 +10,13 @@ import (
 const DefaultPoolSize = 10
 
 //error for invalid pool size
-var ErrInvalidPoolSize = errors.New("Invalid pool Size: pool Size must be a positive number!")
+var ErrInvalidPoolSize = errors.New("Invalid pool size: pool size must be a positive number!")
 
 //error for invalid pool state
-var	ErrInvalidPoolState = errors.New("pool is Closed: Cannot Assign task to a closed pool!")
+var	ErrInvalidPoolState = errors.New("Pool is closed: cannot assign task to a closed pool!")
+
+//error of nil function submitted
+var ErrNilFunction = errors.New("Cannot submit Nil function()!")
 
 
 //PoolService acts as an orchestrator of the entire GoHive functionality
@@ -38,7 +41,7 @@ func NewDefaultSizePool() *PoolService {
 		taskQueue: NewTaskQueue(),
 		poolSize:  DefaultPoolSize,
 	}
-	pool := newFixedSizePool(DefaultPoolSize, poolService)
+	pool := newPool(DefaultPoolSize, poolService)
 	poolService.workerPool = pool
 
 	return poolService
@@ -54,7 +57,7 @@ func NewFixedSizePool(nGoRoutines int) *PoolService {
 		taskQueue: NewTaskQueue(),
 		poolSize:  nGoRoutines,
 	}
-	pool := newFixedSizePool(nGoRoutines, poolService)
+	pool := newPool(nGoRoutines, poolService)
 	poolService.workerPool = pool
 
 	return poolService
@@ -63,7 +66,7 @@ func NewFixedSizePool(nGoRoutines int) *PoolService {
 //submits a new task and assigns it to the pool
 func (rs *PoolService) Submit(fun func()) error {
 	if fun == nil {
-		return nil
+		return ErrNilFunction
 	}
 
 	if rs.workerPool.status == CLOSED {
@@ -97,17 +100,17 @@ func (rs *PoolService) notify() {
 
 //returns active workers
 func (rs *PoolService) ActiveWorkers() int {
-	return rs.workerPool.activeWorkers
+	return rs.workerPool.getActiveWorkers()
 }
 
 //returns pool size
 func (rs *PoolService) PoolSize() int {
-	return rs.workerPool.poolSize
+	return rs.workerPool.getPoolSize()
 }
 
 //returns available workers out of total workers
 func (rs *PoolService) AvailableWorkers() int {
-	return rs.workerPool.poolSize - rs.workerPool.activeWorkers
+	return rs.workerPool.getPoolSize() - rs.workerPool.getActiveWorkers()
 }
 
 //closes the pool
