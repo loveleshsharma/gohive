@@ -12,7 +12,7 @@ const DefaultQueueSize = 10
 type taskQueue struct {
 
 	//queue that holds tasks
-	que        []Task
+	que []Task
 
 	//number of tasks that currently resides in the queue
 	totalTasks int

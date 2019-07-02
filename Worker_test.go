@@ -13,9 +13,7 @@ func Test_worker_run(t *testing.T) {
 		a := 10
 		b := 0
 		//dividing by zero to raise a panic
-		fmt.Println("Division: ",a/b)
+		fmt.Println("Division: ", a/b)
 	})
-
-
 
 }

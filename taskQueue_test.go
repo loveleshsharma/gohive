@@ -45,7 +45,7 @@ func Test_taskQueue_DequeueTaskWhenQueueIsEmpty(t *testing.T) {
 
 	_, err := testQueue.DequeueTask()
 
-	assert.Equal(t,"Queue is Empty",err.Error(),"Error message should be correct!")
+	assert.Equal(t, "Queue is Empty", err.Error(), "Error message should be correct!")
 
 }
 

@@ -13,11 +13,10 @@ const DefaultPoolSize = 10
 var ErrInvalidPoolSize = errors.New("Invalid pool size: pool size must be a positive number!")
 
 //error for invalid pool state
-var	ErrInvalidPoolState = errors.New("Pool is closed: cannot assign task to a closed pool!")
+var ErrInvalidPoolState = errors.New("Pool is closed: cannot assign task to a closed pool!")
 
 //error of nil function submitted
 var ErrNilFunction = errors.New("Cannot submit Nil function()!")
-
 
 //PoolService acts as an orchestrator of the entire GoHive functionality
 //It consists of a pool, that manages workers that run tasks and it
@@ -28,10 +27,10 @@ type PoolService struct {
 	workerPool *pool
 
 	//queue to hold waiting tasks
-	taskQueue  *taskQueue
+	taskQueue *taskQueue
 
 	//size of the pool
-	poolSize   int
+	poolSize int
 }
 
 //returns PoolService object with the default pool size
@@ -91,7 +90,7 @@ func (rs *PoolService) notify() {
 	if rs.taskQueue.IsNotEmpty() {
 		task, err := rs.taskQueue.DequeueTask()
 		if err != nil {
-			fmt.Fprintf(os.Stderr,"Error Dequeueing Task!")
+			fmt.Fprintf(os.Stderr, "Error Dequeueing Task!")
 			return
 		}
 		rs.workerPool.assignTask(task)

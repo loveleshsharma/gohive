@@ -11,7 +11,7 @@ type worker struct {
 	taskChan chan func()
 
 	//reference back to the pool who owns this worker
-	pool     *pool
+	pool *pool
 }
 
 //This method executes the task
@@ -23,7 +23,7 @@ func (w *worker) run() {
 				w.pool.done(w)
 			}
 		}()
-		fun := <- w.taskChan
+		fun := <-w.taskChan
 		fun()
 		w.pool.done(w)
 	}()

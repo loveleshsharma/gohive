@@ -18,19 +18,19 @@ type pool struct {
 	poolCapacity int
 
 	//number of currently active workers
-	activeWorkers    int
+	activeWorkers int
 
 	//pool of available workers out of total poolCapacity
 	availableWorkers sync.Pool
 
 	//object which closes the pool and it can be called only once in the program scope
-	closePool        sync.Once
+	closePool sync.Once
 
 	//Mutex used for atomic operations
-	locker           sync.Mutex
+	locker sync.Mutex
 
 	//represents the current state of the pool(OPEN/CLOSED)
-	status           state
+	status state
 
 	//reference back to the routine service who owns this pool
 	poolService *PoolService
@@ -87,7 +87,7 @@ func (p *pool) close() {
 func (p *pool) isWorkerAvailable() bool { return p.poolCapacity > p.activeWorkers }
 
 //returns number of active workers
-func (p *pool) getActiveWorkers() int {	return p.activeWorkers }
+func (p *pool) getActiveWorkers() int { return p.activeWorkers }
 
 //returns the pool size
 func (p *pool) getPoolSize() int { return p.poolCapacity }

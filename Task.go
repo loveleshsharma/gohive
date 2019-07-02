@@ -9,7 +9,7 @@ func (t *Task) setTask(function func()) {
 	t.executable = function
 }
 
-func (t *Task) getTask() (func()) {
+func (t *Task) getTask() func() {
 	return t.executable
 }
 
