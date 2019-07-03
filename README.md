@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/loveleshsharma/gohive.svg?branch=master)](https://travis-ci.org/loveleshsharma/gohive)
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
 
-<p align="center"> <img width="150" height="150" src="internal/static/GoHiveIcon.png" alt=""></p> 
+<p align="left"> <img width="150" height="150" src="internal/static/GoHiveIcon.png" alt=""></p> 
 
 Package gohive implements a simple and easy to use goroutine pool for Go
 
