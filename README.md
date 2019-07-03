@@ -1,7 +1,10 @@
 # gohive
-<p align="center"> <img width="150" height="150" src="internal/static/GoHiveIcon.png" alt=""></p> 
 
-[![goreportcard][1]][2]
+[![Go Report Card](https://goreportcard.com/badge/github.com/loveleshsharma/gohive)](https://goreportcard.com/report/github.com/loveleshsharma/gohive)
+[![Build Status](https://travis-ci.org/loveleshsharma/gohive.svg?branch=master)](https://travis-ci.org/loveleshsharma/gohive)
+[![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
+
+<p align="center"> <img width="150" height="150" src="internal/static/GoHiveIcon.png" alt=""></p> 
 
 Package gohive implements a simple and easy to use goroutine pool for Go
 
@@ -87,6 +90,3 @@ func factorial(val int) {
 <B>Important : </B> Always put ```defer wg.Done()``` as the first statement of your wrapper function. It will prevent your program from deadlocks in case of panics
 
 Workers implements a notifying mechanism, due to which they can notify to the pool that their task is completed and they are available to execute more tasks if in waiting queue
-
-[1]: https://goreportcard.com/badge/github.com/panjf2000/ants
-[2]: https://goreportcard.com/report/github.com/panjf2000/ants 
