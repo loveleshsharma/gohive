@@ -1,4 +1,4 @@
-package GoHive
+package gohive
 
 import (
 	"fmt"

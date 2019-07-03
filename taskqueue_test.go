@@ -1,4 +1,4 @@
-package GoHive
+package gohive
 
 import (
 	"fmt"
@@ -57,9 +57,9 @@ func Test_taskQueue_IsNotEmpty(t *testing.T) {
 		fmt.Println("sample func")
 	}))
 
-	assert.Equal(t, true, testQueue.IsNotEmpty(), "taskQueue should not be empty!")
+	assert.Equal(t, true, testQueue.IsNotEmpty(), "TaskQueue should not be empty!")
 
 	testQueue.DequeueTask()
 
-	assert.Equal(t, false, testQueue.IsNotEmpty(), "taskQueue should be empty!")
+	assert.Equal(t, false, testQueue.IsNotEmpty(), "TaskQueue should be empty!")
 }

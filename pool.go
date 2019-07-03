@@ -1,4 +1,4 @@
-package GoHive
+package gohive
 
 import (
 	"sync"
@@ -7,7 +7,10 @@ import (
 type state int
 
 const (
+	//OPEN indicates that the pool is open to accept new tasks
 	OPEN   state = 1
+
+	//CLOSED indicates that the pool is closed and won't accept new tasks
 	CLOSED state = 0
 )
 

@@ -1,4 +1,4 @@
-package GoHive
+package gohive
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ func TestNewDefaultSizePool(t *testing.T) {
 
 	testPoolService := NewDefaultSizePool()
 
-	assert.NotNil(t, testPoolService, "pool service should not be nil!")
-	assert.Equal(t, 10, testPoolService.workerPool.poolCapacity, "default pool size should be 10!")
+	assert.NotNil(t, testPoolService, "pool service should not be nil")
+	assert.Equal(t, 10, testPoolService.workerPool.poolCapacity, "default pool size should be 10")
 
 }
 
@@ -20,8 +20,8 @@ func TestNewFixedSizePool(t *testing.T) {
 
 	testPoolService := NewFixedSizePool(15)
 
-	assert.NotNil(t, testPoolService, "pool service should not be nil!")
-	assert.Equal(t, 15, testPoolService.poolSize, "pool size should be 15!")
+	assert.NotNil(t, testPoolService, "pool service should not be nil")
+	assert.Equal(t, 15, testPoolService.poolSize, "pool size should be 15")
 
 }
 
@@ -29,7 +29,7 @@ func TestNewFixedSizePoolWhenPoolSizeIsNegative(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			assert.Equal(t, "Invalid pool size: pool size must be a positive number!", r.(error).Error())
+			assert.Equal(t, "Invalid pool size: pool size must be a positive number", r.(error).Error())
 		}
 	}()
 	testPoolService := NewFixedSizePool(-1)
@@ -43,7 +43,7 @@ func TestPoolService_Submit_WhenFunIsNil(t *testing.T) {
 
 	err := testPoolService.Submit(nil)
 
-	assert.Equal(t, "Cannot submit Nil function()!", err.Error())
+	assert.Equal(t, "Cannot submit Nil function()", err.Error())
 
 }
 
@@ -56,7 +56,7 @@ func TestPoolService_Submit_WhenPoolIsClosed(t *testing.T) {
 		fmt.Println("Test Function")
 	})
 
-	assert.Equal(t, "Pool is closed: cannot assign task to a closed pool!", err.Error())
+	assert.Equal(t, "Pool is closed: cannot assign task to a closed pool", err.Error())
 
 }
 
