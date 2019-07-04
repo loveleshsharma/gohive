@@ -1,12 +1,12 @@
-# gohive
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/loveleshsharma/gohive)](https://goreportcard.com/report/github.com/loveleshsharma/gohive)
-[![Build Status](https://travis-ci.org/loveleshsharma/gohive.svg?branch=master)](https://travis-ci.org/loveleshsharma/gohive)
-[![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#goroutines)
-
-<p align="left"> <img width="150" height="150" src="internal/static/GoHiveIcon.png" alt=""></p> 
-
-Package gohive implements a simple and easy to use goroutine pool for Go
+<p align="center"> 
+    <img width="150" height="150" src="internal/static/GoHiveIcon.png" alt="">
+    <h1 align="center">gohive</h1>
+    <p align="center">Package gohive implements a simple and easy to use goroutine pool for Go<p>
+    <p align="center"><a href="https://goreportcard.com/report/github.com/loveleshsharma/gohive"><img src="https://goreportcard.com/badge/github.com/loveleshsharma/gohive" /></a>
+    <a href="https://travis-ci.org/loveleshsharma/gohive"><img src="https://travis-ci.org/loveleshsharma/gohive.svg?branch=master" /></a>
+    <a href="https://github.com/avelino/awesome-go#goroutines"><img src="https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg" /></a>
+    </p>
+</p>
 
 ## Features
 
