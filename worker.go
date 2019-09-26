@@ -6,7 +6,6 @@ import "log"
 //handle panics if any and after completing the task, notifies
 //back to the pool to pull new task from the TaskQueue
 type worker struct {
-
 	//channel that receives a task
 	taskChan chan func()
 

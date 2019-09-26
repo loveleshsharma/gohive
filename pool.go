@@ -16,7 +16,6 @@ const (
 
 //pool represents a group of workers to whom tasks can be assigned.
 type pool struct {
-
 	//number of workers in the pool
 	poolCapacity int
 

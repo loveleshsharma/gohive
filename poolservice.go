@@ -22,7 +22,6 @@ var ErrNilFunction = errors.New("Cannot submit Nil function()")
 //It consists of a pool, that manages workers that run tasks and it
 //consists of a TaskQueue that holds tasks waiting to acquire a worker
 type PoolService struct {
-
 	//pool that consists of workers
 	workerPool *pool
 

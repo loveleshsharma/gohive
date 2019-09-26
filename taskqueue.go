@@ -10,7 +10,6 @@ const DefaultQueueSize = 10
 //TaskQueue represents a queue that holds tasks which
 //are in waiting for workers from the pool
 type TaskQueue struct {
-
 	//queue that holds tasks
 	que []Task
 
