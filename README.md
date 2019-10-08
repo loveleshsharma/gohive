@@ -6,7 +6,7 @@
     <a href="https://goreportcard.com/report/github.com/loveleshsharma/gohive"><img src="https://goreportcard.com/badge/github.com/loveleshsharma/gohive" /></a>
     <a href="https://codecov.io/gh/loveleshsharma/gohive"><img src="https://codecov.io/gh/loveleshsharma/gohive/branch/master/graph/badge.svg" /></a>
     <a href="https://godoc.org/github.com/loveleshsharma/gohive"><img src="https://godoc.org/github.com/loveleshsharma/gohive?status.svg" /></a>
-<!--    <a href="https://github.com/avelino/awesome-go#goroutines"><img src="https://awesome.re/mentioned-badge.svg" /></a> -->
+    <a href="https://github.com/avelino/awesome-go#goroutines"><img src="https://awesome.re/mentioned-badge.svg" /></a>
     </p>
 </p>
 
