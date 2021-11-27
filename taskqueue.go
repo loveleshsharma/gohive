@@ -2,6 +2,7 @@ package gohive
 
 import (
 	"github.com/pkg/errors"
+	"sync"
 )
 
 //DefaultQueueSize indicates the default size of the TaskQueue
@@ -15,6 +16,9 @@ type TaskQueue struct {
 
 	//number of tasks that currently resides in the queue
 	totalTasks int
+
+	//Mutex used for atomic operations
+	locker sync.Mutex
 }
 
 //NewTaskQueue returns new TaskQueue with the default capacity
@@ -25,12 +29,16 @@ func NewTaskQueue() *TaskQueue {
 
 //EnqueueTask puts a new task in the TaskQueue
 func (wq *TaskQueue) EnqueueTask(task Task) {
+	wq.locker.Lock()
+	defer wq.locker.Unlock()
 	wq.que = append(wq.que, task)
 	wq.totalTasks++
 }
 
 //DequeueTask returns a task and removes it from the TaskQueue
 func (wq *TaskQueue) DequeueTask() (Task, error) {
+	wq.locker.Lock()
+	defer wq.locker.Unlock()
 	if wq.totalTasks > 0 {
 		task := wq.que[0]
 		wq.que = append(wq.que[:0], wq.que[1:]...)
@@ -42,5 +50,7 @@ func (wq *TaskQueue) DequeueTask() (Task, error) {
 
 //IsNotEmpty returns whether the TaskQueue is empty or not
 func (wq *TaskQueue) IsNotEmpty() bool {
+	wq.locker.Lock()
+	defer wq.locker.Unlock()
 	return wq.totalTasks > 0
 }
