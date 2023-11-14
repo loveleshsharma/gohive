@@ -6,33 +6,33 @@ import (
 	"os"
 )
 
-//DefaultPoolSize is a default size for number of workers in the pool
+// DefaultPoolSize is a default size for number of workers in the pool1
 const DefaultPoolSize = 10
 
-//ErrInvalidPoolSize indicates that the pool size is invalid
-var ErrInvalidPoolSize = errors.New("Invalid pool size: pool size must be a positive number")
+// ErrInvalidPoolSize indicates that the pool1 size is invalid
+var ErrInvalidPoolSize = errors.New("Invalid pool1 size: pool1 size must be a positive number")
 
-//ErrInvalidPoolState indicates that the invalid pool state
-var ErrInvalidPoolState = errors.New("Pool is closed: cannot assign task to a closed pool")
+// ErrInvalidPoolState indicates that the invalid pool1 state
+var ErrInvalidPoolState = errors.New("Pool is closed: cannot assign task to a closed pool1")
 
-//ErrNilFunction indicates that a nil function submitted
+// ErrNilFunction indicates that a nil function submitted
 var ErrNilFunction = errors.New("Cannot submit Nil function()")
 
-//PoolService acts as an orchestrator of the entire GoHive functionality
-//It consists of a pool, that manages workers that run tasks and it
-//consists of a TaskQueue that holds tasks waiting to acquire a worker
+// PoolService acts as an orchestrator of the entire GoHive functionality
+// It consists of a pool1, that manages workers that run tasks and it
+// consists of a TaskQueue that holds tasks waiting to acquire a worker
 type PoolService struct {
-	//pool that consists of workers
-	workerPool *pool
+	//pool1 that consists of workers
+	workerPool *pool1
 
 	//queue to hold waiting tasks
 	taskQueue *TaskQueue
 
-	//size of the pool
+	//size of the pool1
 	poolSize int
 }
 
-//NewDefaultSizePool returns PoolService object with the default pool size
+// NewDefaultSizePool returns PoolService object with the default pool1 size
 func NewDefaultSizePool() *PoolService {
 
 	poolService := &PoolService{
@@ -45,7 +45,7 @@ func NewDefaultSizePool() *PoolService {
 	return poolService
 }
 
-//NewFixedSizePool returns PoolService object with the specified pool size
+// NewFixedSizePool returns PoolService object with the specified pool1 size
 func NewFixedSizePool(nGoRoutines int) *PoolService {
 
 	if nGoRoutines <= 0 {
@@ -61,7 +61,7 @@ func NewFixedSizePool(nGoRoutines int) *PoolService {
 	return poolService
 }
 
-//Submit submits a new task and assigns it to the pool
+// Submit submits a new task and assigns it to the pool1
 func (rs *PoolService) Submit(fun func()) error {
 	if fun == nil {
 		return ErrNilFunction
@@ -82,9 +82,9 @@ func (rs *PoolService) Submit(fun func()) error {
 	return nil
 }
 
-//notifies the poolService that one of the worker from
-//the pool has completed its task and a new task can be
-//assigned to this worker if waiting in the queue.
+// notifies the poolService that one of the worker from
+// the pool1 has completed its task and a new task can be
+// assigned to this worker if waiting in the queue.
 func (rs *PoolService) notify() {
 	if rs.taskQueue.IsNotEmpty() {
 		task, err := rs.taskQueue.DequeueTask()
@@ -96,22 +96,22 @@ func (rs *PoolService) notify() {
 	}
 }
 
-//ActiveWorkers returns active workers
+// ActiveWorkers returns active workers
 func (rs *PoolService) ActiveWorkers() int {
 	return rs.workerPool.getActiveWorkers()
 }
 
-//PoolSize returns pool size
+// PoolSize returns pool1 size
 func (rs *PoolService) PoolSize() int {
 	return rs.workerPool.getPoolSize()
 }
 
-//AvailableWorkers returns available workers out of total workers
+// AvailableWorkers returns available workers out of total workers
 func (rs *PoolService) AvailableWorkers() int {
 	return rs.workerPool.getPoolSize() - rs.workerPool.getActiveWorkers()
 }
 
-//Close closes the pool
+// Close closes the pool1
 func (rs *PoolService) Close() {
 	rs.workerPool.close()
 }
