@@ -35,6 +35,17 @@ func TestPool_CloseShouldReturnNilIfPoolIsOpen(t *testing.T) {
 	assert.Nil(t, actualError, "error should be nil")
 }
 
+func TestPool_IsPoolClosedShouldReturnTrueOrFalseIfThePoolIsClosed(t *testing.T) {
+	testPool := NewFixedPool(5)
+
+	closed := testPool.IsPoolClosed()
+	assert.Falsef(t, closed, "pool should not be closed")
+
+	_ = testPool.Close()
+	closed = testPool.IsPoolClosed()
+	assert.True(t, closed, "pool should be closed")
+}
+
 func TestPool_SubmitShouldReturnErrorIfRunnableIsPassedAsNil(t *testing.T) {
 	testPool := NewFixedPool(5)
 
