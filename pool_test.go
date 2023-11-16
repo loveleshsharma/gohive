@@ -42,3 +42,12 @@ func TestPool_SubmitShouldReturnErrorIfRunnableIsPassedAsNil(t *testing.T) {
 
 	assert.NotNil(t, actualError, "Submit should return error if runnable is nil")
 }
+
+func TestPool_SubmitShouldReturnErrorIfPoolIsClosed(t *testing.T) {
+	testPool := NewFixedPool(5)
+
+	_ = testPool.Close()
+	actualError := testPool.Submit(runnableObject)
+
+	assert.NotNil(t, actualError, "Submit should return error if runnable is nil")
+}
