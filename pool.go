@@ -48,6 +48,10 @@ func (p *Pool) Close() error {
 	return errors.New("error: cannot close an already closed pool")
 }
 
+func (p *Pool) IsPoolClosed() bool {
+	return p.state == CLOSED
+}
+
 func (p *Pool) Submit(r Runnable) error {
 	if r == nil {
 		return errors.New("cannot submit nil Runnable")
