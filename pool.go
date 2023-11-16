@@ -2,6 +2,7 @@ package gohive
 
 import (
 	"errors"
+	"fmt"
 	"sync/atomic"
 )
 
@@ -23,6 +24,7 @@ type Pool struct {
 func NewFixedPool(size int) *Pool {
 	pool := &Pool{
 		poolChan: make(chan Runnable),
+		quitChan: make(chan bool),
 		state:    OPEN,
 		size:     size,
 	}
@@ -37,6 +39,9 @@ func NewFixedPool(size int) *Pool {
 
 func (p *Pool) Close() error {
 	if p.state == OPEN {
+		for i := 0; i < p.size; i++ {
+			p.quitChan <- true
+		}
 		p.state = CLOSED
 		return nil
 	}
@@ -57,6 +62,7 @@ func (p *Pool) Submit(r Runnable) error {
 }
 
 func (p *Pool) worker() {
+Loop:
 	for {
 		select {
 		case r := <-p.poolChan:
@@ -64,7 +70,8 @@ func (p *Pool) worker() {
 			r.Run()
 			atomic.AddInt32(&p.availableWorkers, 1)
 		case <-p.quitChan:
-			break
+			break Loop
 		}
 	}
+	fmt.Println("closing...")
 }
