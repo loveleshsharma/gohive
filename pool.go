@@ -6,17 +6,15 @@ import (
 	"sync/atomic"
 )
 
-type PoolState int
-
 const (
-	OPEN PoolState = iota
+	OPEN = iota
 	CLOSED
 )
 
 type Pool struct {
 	poolChan         chan Runnable
 	quitChan         chan bool
-	state            PoolState
+	state            int32
 	size             int
 	availableWorkers int32
 }
@@ -38,18 +36,18 @@ func NewFixedPool(size int) *Pool {
 }
 
 func (p *Pool) Close() error {
-	if p.state == OPEN {
+	if atomic.CompareAndSwapInt32(&p.state, OPEN, CLOSED) {
 		for i := 0; i < p.size; i++ {
 			p.quitChan <- true
 		}
-		p.state = CLOSED
+		fmt.Println("pool is closed.")
 		return nil
 	}
 	return errors.New("error: cannot close an already closed pool")
 }
 
 func (p *Pool) IsPoolClosed() bool {
-	return p.state == CLOSED
+	return atomic.LoadInt32(&p.state) == CLOSED
 }
 
 func (p *Pool) Submit(r Runnable) error {
@@ -57,7 +55,7 @@ func (p *Pool) Submit(r Runnable) error {
 		return errors.New("cannot submit nil Runnable")
 	}
 
-	if p.state == CLOSED {
+	if atomic.LoadInt32(&p.state) == CLOSED {
 		return errors.New("cannot submit, pool is closed")
 	}
 
