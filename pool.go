@@ -58,11 +58,7 @@ func (p *Pool) Submit(r Runnable) error {
 	if atomic.LoadInt32(&p.state) == CLOSED {
 		return errors.New("cannot submit, pool is closed")
 	}
-
-	if atomic.LoadInt32(&p.availableWorkers) == 0 {
-		return errors.New("cannot submit, pool is full")
-	}
-
+	
 	p.poolChan <- r
 	return nil
 }
