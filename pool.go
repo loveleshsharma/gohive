@@ -64,6 +64,7 @@ func (p *Pool) Submit(r Runner) error {
 }
 
 func (p *Pool) worker() {
+	defer fmt.Println("closing...")
 Loop:
 	for {
 		select {
@@ -75,5 +76,4 @@ Loop:
 			break Loop
 		}
 	}
-	fmt.Println("closing...")
 }
