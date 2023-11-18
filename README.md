@@ -92,3 +92,11 @@ func factorial(val int) {
 <B>Important : </B> Always put ```defer wg.Done()``` as the first statement of your wrapper function. It will prevent your program from deadlocks in case of panics
 
 Workers implements a notifying mechanism, due to which they can notify to the pool that their task is completed and they are available to execute more tasks if in waiting queue
+
+###
+TODO
+1. Maintain a waiting queue to stop blocking submit method when all goroutines are busy.
+2. Submitting priority tasks which takes priority over other tasks.
+3. Handling panics inside goroutines to prevent them from crashing.
+4. Implement dynamic pool which will scale the number of goroutines as per requirement and scales down when they are idle.
+5. Submitting multiple tasks together.
