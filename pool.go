@@ -12,7 +12,7 @@ const (
 )
 
 type Pool struct {
-	poolChan         chan Runnable
+	poolChan         chan Runner
 	quitChan         chan bool
 	state            int32
 	size             int
@@ -21,7 +21,7 @@ type Pool struct {
 
 func NewFixedPool(size int) *Pool {
 	pool := &Pool{
-		poolChan: make(chan Runnable),
+		poolChan: make(chan Runner),
 		quitChan: make(chan bool),
 		state:    OPEN,
 		size:     size,
@@ -50,15 +50,15 @@ func (p *Pool) IsPoolClosed() bool {
 	return atomic.LoadInt32(&p.state) == CLOSED
 }
 
-func (p *Pool) Submit(r Runnable) error {
+func (p *Pool) Submit(r Runner) error {
 	if r == nil {
-		return errors.New("cannot submit nil Runnable")
+		return errors.New("cannot submit nil Runner")
 	}
 
 	if atomic.LoadInt32(&p.state) == CLOSED {
 		return errors.New("cannot submit, pool is closed")
 	}
-	
+
 	p.poolChan <- r
 	return nil
 }
