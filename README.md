@@ -13,11 +13,9 @@
 ## Features
 
 - Pool can be created with a specific size as per the requirement
-- Offers efficient performance by implementing ```sync.Pool```, which maintains pool of workers in which workers gets recycled automatically when not in use  
-- Implements a <B>Task Queue</B> which can hold surplus tasks in waiting, if submitted more than the pool capacity
-- Implements PoolService type, which acts as an easy to use API with simple methods to interact with gohive
-- Gracefully handles panics and prevent the application from getting crashed or into deadlocks
-- Provides functions like: AvailableWorkers(), ActiveWorkers() and Close() etc.
+- Accepts tasks which implements Runner interface
+- Uses channels to accepts tasks and gets them executed via workers
+- Uses synchronization among workers to avoid race conditions
 
 ## Installation
 Use ```go get``` to install and update:
@@ -27,18 +25,18 @@ $ go get -u github.com/loveleshsharma/gohive
 
 ## Usage
 
-- Create an instance of PoolService type first
+- Create an instance of Pool type first
 
 ```go
-hive := gohive.NewFixedSizePool(5)
+hive := gohive.NewFixedPool(5)
 ```
 
 - Invoke the Submit() function and pass the task to execute
 
 ```go
-hive.Submit(someTask())
+hive.Submit(object Runner)
 ```
-Submit function accepts a function as an argument, which it passes to the pool if a worker is available, otherwise enqueues it in a waiting queue
+Submit function accepts a Runner object as an argument, which it passes to the pool if a worker is available, otherwise it will wait for the worker to be available
 
 - To close the pool we can invoke the Close() function
 
@@ -55,43 +53,53 @@ Let's get into a full program where we can see how to use the gohive package in 
 package main
 
 import (
-	"github.com/loveleshsharma/gohive"
-	"fmt"
-	"sync"
+   "fmt"
+   "github.com/loveleshsharma/gohive"
+   "sync"
 )
 
 func main() {
+   var wg sync.WaitGroup
+   pool := gohive.NewFixedPool(5)
 
-	var wg sync.WaitGroup
-	hivePool := gohive.NewFixedSizePool(5)
+   for i := 1; i <= 20; i++ {
+      if err := pool.Submit(NewMyStruct(i, &wg)); err != nil {
+         fmt.Println("error: ", err)
+         break
+      }
+   }
 
-	//wrap your executable function into another function with wg.Done()
-	executableTask := func() {
-		defer wg.Done()
-		factorial(5)
-	}
-
-	wg.Add(1)
-	hivePool.Submit(executableTask)
-
-	wg.Wait()
+   wg.Wait()
 }
 
-func factorial(val int) {
-	var fact = val
-	var res = 1
-
-	for i := fact; i > 0; i-- {
-		res = res * i
-	}
-
-	fmt.Printf("Factorial: %v", res)
+type MyStruct struct {
+   num int
+   wg  *sync.WaitGroup
 }
+
+func NewMyStruct(num int, wg *sync.WaitGroup) MyStruct {
+   myStruct := MyStruct{
+      num: num,
+      wg:  wg,
+   }
+   wg.Add(1)
+   return myStruct
+}
+
+func (s MyStruct) Run() {
+   defer s.wg.Done()
+   val := s.num
+   fact := s.num
+   for i := s.num - 1; i > 0; i-- {
+      fact *= i
+   }
+
+   fmt.Printf("Factorial of %d: %d\n", val, fact)
+}
+
 
 ```
-<B>Important : </B> Always put ```defer wg.Done()``` as the first statement of your wrapper function. It will prevent your program from deadlocks in case of panics
-
-Workers implements a notifying mechanism, due to which they can notify to the pool that their task is completed and they are available to execute more tasks if in waiting queue
+<B>Important : </B> Always keep sync.WaitGroup in your struct and put ```defer wg.Done()``` as the first statement of your Run() function. It will wait for your task to complete.
 
 ###
 TODO
